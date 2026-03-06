@@ -1,4 +1,4 @@
-# <PatrinRoman_QAP23-onl>
+## Project: PatrinRoman_QAP23-onl
 
 <Это проект для всех домашних работ по курсу Автоматизированное тестирование на Python>
 
