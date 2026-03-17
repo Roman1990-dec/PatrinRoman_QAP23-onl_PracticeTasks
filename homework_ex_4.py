@@ -4,7 +4,7 @@ print(
 )
 print("*" * 40)
 
-try:
+try:  # это механизм обработки ошибок в Python. Программа не упадет, а продолжит работать дальше
     N = int(input("Введите число N: "))
 
     for i in range(1, 11):
@@ -14,7 +14,7 @@ try:
     else:
         print(f"{product_result}")
 
-except ValueError:
+except ValueError:  # это механизм обработки ошибок в Python. Программа не упадет, а продолжит работать дальше
     print("Ошибка: введите целое число!")
 
 print("*" * 40)
@@ -98,12 +98,82 @@ print("*" * 40)
 
 
 # 5. Напиши функцию *args с именем my_stats которая принимает любое количество чисел и возвращает сразу три значения — минимум, максимум и среднее.
+print("Задание №5: Напиши функцию *args с именем my_stats")
+print("*" * 40)
+
+
+def my_stats(*args: float) -> tuple[float, float, float]:
+    """
+    Функция принимает произвольное количество чисел и возвращает их минимум, максимум и среднее арифметическое
+    """
+    min_value = min(args)
+    max_value = max(args)
+    average = sum(args) / len(args)
+    return min_value, max_value, average
+
+
+user_input = input("Введите числа через пробел: ")
+
+numbers = []
+for num_str in user_input.split():
+    numbers.append(
+        float(num_str)
+    )  # Для себя: использовал float, потому что пользователь может добавить дробные числа, а также среднее арифметическое может быть дробным
+
+result = my_stats(*numbers)
+
+print(f"Введенные числа: {numbers}")
+print(f"Минимум: {result[0]}")
+print(f"Максимум: {result[1]}")
+print(f"Среднее: {result[2]:.2f}")
+
+print("*" * 40)
 
 
 # 6. Напиши функцию build_profile(**kwargs) которая принимает любые именованные аргументы и
 # возвращает словарь с этими данными плюс автоматически добавляет ключ 'registered': True. Добавь к функции docstring.
+print("Задание №6: Напиши функцию build_profile(**kwargs)")
+print("*" * 40)
 
+
+def build_profile(**kwargs: str) -> dict[str, str | bool]:
+    """
+    Функция принимает произвольные именованные аргументы и возвращает словарь с профилем
+
+    Параметры:
+    **kwargs - произвольные именованные аргументы (ключ=значение)
+
+    Возвращает:
+    dict - словарь, содержащий все переданные аргументы плюс ключ 'registered': True
+    """
+    profile = dict(**kwargs)
+    profile["registered"] = True
+    return profile
+
+
+print("Создадим ваш профиль")
+print("\n" + "=" * 30)
+
+name = input("Введите ваше имя: ")
+age = input("Введите ваш возраст: ")
+male = input("Введите ваш пол (муж или жен): ")
+phone = input("Введите ваш номер телефона: ")
+
+user_info = {"Имя": name, "Возраст": age, "Пол": male, "Контактный телефон": phone}
+
+profile = build_profile(**user_info)
+
+print("\n" + "=" * 30)
+print("ВАШ ПРОФИЛЬ:")
+for key, value in profile.items():
+    print(f"  {key}: {value}")
+
+print("*" * 40)
 
 # 7. Создай модуль math_utils.py с тремя функциями: square(n) — возводит в квадрат, cube(n) — возводит в куб,
 # is_even(n) — возвращает True/False. В main.py импортируй модуль, попроси пользователя ввести число через input, примени все три функции и выведи результаты.
 # Защити вызовы конструкцией if __name__ == "__main__".
+
+"""
+См. отдельные файлы hw4_main.py и hw4_maths_utils.py
+"""
