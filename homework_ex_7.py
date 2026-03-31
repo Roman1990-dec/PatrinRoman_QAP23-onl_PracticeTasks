@@ -1,5 +1,7 @@
-import functools, warnings
-from typing import Callable, Any, List, Optional
+import functools
+import warnings
+import datetime
+from typing import Callable, Any
 
 
 # 1. Напишите рекурсивную функцию palindrome(s), которая проверяет, является ли строка палиндромом. Без срезов и reversed(), только рекурсия.
@@ -135,28 +137,31 @@ print("*" * 40)
 print("Задание №3: Напишите декоратор @retry(n)")
 print("*" * 40)
 
+
 def retry(n: int) -> Callable:
-    '''
+    """
     Декоратор, который повторяет вызов функции при возникновении исключения.
 
     Args:
         n (int): максимальное количество попыток
     Returns:
         Callabe: декоратор, оборачивающий функцию
-    '''
+    """
+
     def decorator(func: Callable) -> Callable:
-        '''
+        """
         Внутренняя функция-декоратор, которая оборачивает исходную функцию
 
         Args:
             func (Callable): функция, которую нужно обернуть
         Returns:
             Callble: обёрнутая функция с логикой повторных попыток
-        '''
+        """
+
         # Сохраняем метаданные исходной функции (имя, документацию и т.д.)
         @functools.wraps(func)
         def wrapper(*args, **kwargs) -> Any:
-            '''
+            """
             Обёртка, которая выполняет функцию с повторными попытками
 
             Args:
@@ -166,8 +171,8 @@ def retry(n: int) -> Callable:
                 Any: результат вызова исходной функции
             Raises:
                 Exception: последнее исключение, если все попытки неудачны
-            '''
-            last_exception = None # переменная, в которой будем хранить по итогу последнее исключение
+            """
+            last_exception = None  # переменная, в которой будем хранить по итогу последнее исключение
 
             for attempt in range(1, n + 1):
                 try:
@@ -182,42 +187,56 @@ def retry(n: int) -> Callable:
                         break
                     print(f"Повторяем... Осталось попыток: {n - attempt}")
             raise last_exception
+
         return wrapper
+
     return decorator
+
 
 print("Тестируем работу декоратора: ")
 print("_-" * 40)
 
 print("=== Пример 1: Функция, которая работает с первой попытки ===\n")
+
+
 @retry(3)
 def always_works_function():
     pass
     return "Успешный результат!"
 
+
 result = always_works_function()
 print(f"Результат: {result}\n")
 
 print("=== Пример 2: Функция, которая работает со второй попытки ===\n")
+
+
 @retry(3)
 def works_on_second_attempt():
-    if not hasattr(works_on_second_attempt, "attempts"): # сделано для демонстрации, т.к. hasattr(объект, "имя_атрибута") - проверяет, есть ли у объекта атрибут с таким именем
-        works_on_second_attempt.attempts = 0 # сделано для демонстрации, т.к. hasattr(объект, "имя_атрибута") - проверяет, есть ли у объекта атрибут с таким именем
-    
+    if not hasattr(
+        works_on_second_attempt, "attempts"
+    ):  # сделано для демонстрации, т.к. hasattr(объект, "имя_атрибута") - проверяет, есть ли у объекта атрибут с таким именем
+        works_on_second_attempt.attempts = 0  # сделано для демонстрации, т.к. hasattr(объект, "имя_атрибута") - проверяет, есть ли у объекта атрибут с таким именем
+
     works_on_second_attempt.attempts += 1
-    
+
     if works_on_second_attempt.attempts == 1:
         raise ValueError("Неверное значение")
-    
+
     return f"Успех после {works_on_second_attempt.attempts} попыток!"
+
 
 result = works_on_second_attempt()
 print(f"Результат: {result}\n")
 
 print("=== Пример 3: Функция, которая всегда падает ===\n")
+
+
 @retry(3)
 def always_fails():
     """Функция, которая всегда выбрасывает исключение"""
     raise ConnectionError("Сервер недоступен")
+
 
 try:
     result = always_fails()
@@ -231,20 +250,23 @@ print("*" * 40)
 print("Задание №4: Напишите декоратор @deprecated(message)")
 print("*" * 40)
 
+
 def deprecated(message: str) -> Callable:
-    '''
+    """
     При вызове функции выводит предупреждение с указанным сообщением,
     но функция всё равно выполняется.
-    
+
     Args:
         message (str): сообщение-предупреждение (например, объяснение, какую новую функцию использовать вместо устаревшей)
     Returns:
         Callable: декоратор, оборачивающий функцию
-    '''
+    """
+
     def decorator(func: Callable) -> Callable:
-        '''
+        """
         Внутренняя функция-декоратор, оборачивающая исходную функцию.
-        '''
+        """
+
         # Сохраняем метаданные исходной функции (имя, документацию и т.д.)
         @functools.wraps(func)
         def wrapper(*args, **kwargs) -> Any:
@@ -255,25 +277,28 @@ def deprecated(message: str) -> Callable:
             # category=DeprecationWarning - специальный тип для устаревших функций
             # stacklevel=2 - показывает правильную строку в предупреждении
             warnings.warn(
-                message, # Текст предупреждения
-                category=DeprecationWarning, # Тип предупреждения
-                stacklevel=2 # Уровень стека (чтобы указывало на вызов функции)
+                message,  # Текст предупреждения
+                category=DeprecationWarning,  # Тип предупреждения
+                stacklevel=2,  # Уровень стека (чтобы указывало на вызов функции)
             )
-            
+
             # Вызываем исходную функцию и возвращаем её результат
             return func(*args, **kwargs)
-        
+
         return wrapper
-    
+
     return decorator
+
 
 print("Тестируем работу декоратора @deprecated(message): ")
 print("_-" * 40)
+
 
 @deprecated("Функция old_calc устарела. Используйте new_calc()")
 def old_calc(a: int, b: int) -> int:
     """Старая функция для вычислений"""
     return a + b
+
 
 result = old_calc(5, 3)
 print(f"Результат: {result}")
@@ -281,3 +306,91 @@ print(f"Имя функции: {old_calc.__name__}")  # Проверяем, чт
 print(f"Документация: {old_calc.__doc__}")
 
 print("-" * 40)
+
+# 5. Напишите рекурсивную функцию binary_search(lst, target) (бинарный поиск числа в списке), оберните её декоратором @logger, который логирует каждый вызов с параметрами.
+print("*" * 40)
+print("Задание №5: Напишите рекурсивную функцию binary_search(lst, target)")
+print("*" * 40)
+
+
+def logger(func):
+    """
+    Декоратор, который логирует каждый вызов функции
+    """
+
+    @functools.wraps(
+        func
+    )  # Нужно запомнить!!!: Сохраняет метаданные исходной функции (имя, документацию)
+    def wrapper(*args, **kwargs):
+        current_time = datetime.datetime.now().strftime(
+            "%Y-%m-%d %H:%M:%S"
+        )  # текуще время для логирования
+
+        print(
+            f"[{current_time}] Вызов функции '{func.__name__}' с аргументами: {args}, {kwargs}"
+        )
+
+        result = func(
+            *args, **kwargs
+        )  #  Вызываем исходную функцию и сохраняем результат
+
+        print(
+            f"[{current_time}] Функция '{func.__name__}' вернула: {result}"
+        )  # логируем результат выполнения
+
+        return result
+
+    return wrapper
+
+
+@logger
+def binary_search(lst: list, target: int) -> int:
+    """
+    Рекурсивная функция бинарного поиска элемента в отсортированном списке.
+
+    Args:
+        lst (list): отсортированный список чисел.
+        target (int): число, которое нужно найти.
+
+    Returns:
+        int: индекс найденного элемента или -1, если элемент не найден.
+    """
+
+    def _binary_search_recursive(low: int, high: int) -> int:
+        """
+        Вспомогательная рекурсивная функция, которая выполняет основной поиск.
+        Принимает границы поиска (low и high) и ищет target в lst[low:high+1].
+        """
+        # Базовый случай: если границы поиска пересеклись, элемента нет в списке
+        if low > high:
+            return -1
+
+        # Находим середину текущего диапазона
+        mid = (low + high) // 2
+
+        # Если средний элемент — это искомый, возвращаем его индекс
+        if lst[mid] == target:
+            return mid
+
+        # Если искомый элемент меньше среднего, ищем в левой половине
+        elif lst[mid] > target:
+            return _binary_search_recursive(low, mid - 1)
+
+        # Если искомый элемент больше среднего, ищем в правой половине
+        else:
+            return _binary_search_recursive(mid + 1, high)
+
+    # Запускаем рекурсивный поиск с начальными границами: от начала до конца списка
+    return _binary_search_recursive(0, len(lst) - 1)
+
+
+# Отсортированный список для поиска
+sorted_list = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19]
+
+# Ищем существующие элементы
+print("Ищем 7:", binary_search(sorted_list, 7))
+print("\nИщем 1:", binary_search(sorted_list, 1))
+print("\nИщем 19:", binary_search(sorted_list, 19))
+
+# Ищем несуществующий элемент
+print("\nИщем 4:", binary_search(sorted_list, 4))
