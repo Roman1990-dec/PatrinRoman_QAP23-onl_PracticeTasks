@@ -381,3 +381,87 @@ dist_3d = p3d_1.distance_to(p3d_2)
 print(f"\nРасстояние от {p3d_1} до {p3d_2}: {dist_3d:.2f}")
 
 print("-" * 40)
+
+# 5. Создай класс-итератор Countdown, который при итерации возвращает числа от start до 0.
+# Реализуй __iter__ и __next__ (при исчерпании бросай StopIteration).
+# Проверь в цикле for и через list().
+print("*" * 40)
+print(
+    "Задание №5: Создай класс-итератор Countdown, который при итерации возвращает числа от start до 0"
+)
+print("*" * 40)
+
+
+class Countdown:
+    """Итератор, который считает от заданного числа до 0"""
+
+    def __init__(self, start: int) -> None:
+        """
+        Конструктор итератора
+
+        Args:
+            start: число, с которого начинается обратный отсчет
+        """
+        self.start = start  # Сохраняем начальное значение
+        self.current = start  # Текущее значение (будет уменьшаться)
+        print(f"Создан итератор Countdown от {start} до 0")
+
+    def __iter__(self):
+        """
+        Метод, который возвращает сам итератор
+
+        Returns:
+            self: сам объект-итератор
+        """
+        print("  → Вызван __iter__ (начинаем итерацию)")
+        return self
+
+    def __next__(self):
+        """
+        Метод, который возвращает следующий элемент.
+        Вызывается на каждом шаге итерации.
+
+        Returns:
+            int: следующее число
+
+        Raises:
+            StopIteration: когда числа закончились
+        """
+        print(f"  → Вызван __next__, current = {self.current}")
+
+        # Проверяем, не закончились ли числа
+        if self.current < 0:
+            print("  → Достигнут конец! Выбрасываем StopIteration")
+            raise StopIteration  # Сигнал, что элементы закончились
+
+        result = self.current
+
+        self.current -= 1
+
+        return result
+
+
+print("=" * 60)
+print("ДЕМОНСТРАЦИЯ 1: Использование в цикле for")
+print("=" * 60)
+
+counter = Countdown(5)
+
+print("\nЗапускаем цикл for:")
+for num in counter:
+    print(f"    Цикл получил: {num}")
+
+print("\nЦикл завершен (автоматически поймал StopIteration)")
+
+print("\n" + "=" * 60)
+print("ДЕМОНСТРАЦИЯ 2: Использование с list()")
+print("=" * 60)
+
+# Создаем новый итератор (старый уже исчерпан)
+counter2 = Countdown(3)
+
+print("\nПреобразуем в список:")
+result_list = list(counter2)
+print(f"Результат: {result_list}")
+
+print("-" * 40)
